@@ -1,6 +1,6 @@
 //clases
 #include "Avion.h"
-
+#include "Piloto.h"
 //listas
 #include "CircularDoble.h"
 
@@ -54,14 +54,12 @@ void cargarAviones(string nombreArchivo){
             string vuelo=item["vuelo"].get<std::string>();
             string numero_de_registro=item["numero_de_registro"].get<std::string>();
             string modelo=item["modelo"].get<std::string>();
-            string fabricante=item["fabricante"].get<std::string>();
-            int anio_fabricacion= item["ano_fabricacion"].get<int>();
             int capacidad=item["capacidad"].get<int>();
-            int peso_max_despegue=item["peso_max_despegue"].get<int>();
             string aerolinea=item["aerolinea"].get<std::string>();
+            string ciudad_destino=item["ciudad_destino"].get<std::string>();
             string estado=item["estado"].get<std::string>();
 
-            Avion avionNuevo(vuelo,numero_de_registro,modelo,fabricante,anio_fabricacion,capacidad,peso_max_despegue,aerolinea,estado);
+            Avion avionNuevo(vuelo,numero_de_registro,modelo,capacidad,aerolinea,ciudad_destino,estado);
             AvionesMantenimiento.insertarFinal(avionNuevo);
 
             cout << "Avion en mantenimiento cargado correctamente" << endl;
@@ -105,10 +103,17 @@ void cargaPilotos(string nombreArchivo) {
     json j;
     archivo >> j;
 
-    //for (const auto& item : j) {
-       
-      //  cout << "Pasajero cargado correctamente" << endl;
-   // }  
+    for (const auto& item : j) {
+        string nombre=item["nombre"].get<string>();
+        string nacionalidad=item["nacionalidad"].get<string>();
+        string numero_de_id=item["numero_de_id"].get<string>();
+        string numero_vuelo=item["vuelo"].get<string>();
+        int horasDeVuelo=item["horas_de_vuelo"].get<int>();
+        string licencia=item["tipo_de_licencia"].get<string>();
+
+        Piloto pilotoNuevo(nombre,nacionalidad,numero_de_id,numero_vuelo,horasDeVuelo,licencia);
+        cout << pilotoNuevo.ToString() << endl;
+    }  
 }
 
 void cargaMovimientos(string nombreArchivo) {
@@ -141,6 +146,49 @@ void visualizarReportes() {
     cout << "======REPORTES DOT.======" << endl;
     AvionesMantenimiento.generarReporte("Aviones_Mantenimiento");
     
+}
+
+void consultarHorasVuelo(){
+     int opcion =0;
+
+    while (opcion!=4){
+        cout << "=========Menu horas de vuelo=======" << endl;
+        cout << "1. Preorder" << endl;
+        cout << "2. Inorder" << endl;
+        cout << "3. Postorder" << endl;
+        cout << "4. Salir" << endl;
+        cout << "==============================" << endl;
+
+        cout << "Ingrese una opcion: ";
+        cin >> opcion;
+        cout << endl;
+
+        switch (opcion){
+            
+            case 1:
+               
+                break;
+           
+            case 2:
+                
+                
+                break;
+          
+            case 3:
+                
+                break;
+           
+            case 4:
+                cout<< "Salio del menu horas de vuelo"<<endl;
+                break;
+
+            default:
+                cout<< "Opcion no valida"<<endl;
+                break;
+        }
+
+    }
+
 }
 
 void menuPrincipal(){
@@ -199,7 +247,7 @@ void menuPrincipal(){
                 break;
             //consulta de horas de vuelo
             case 5:
-                
+                consultarHorasVuelo();
                 break;
             //recomendar ruta
             case 6:

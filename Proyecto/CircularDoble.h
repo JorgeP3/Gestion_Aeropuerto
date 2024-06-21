@@ -125,8 +125,12 @@ void CircularDoble::visualizarLista(){
 }
 
 void CircularDoble::generarReporte(string titulo){
-    //string codigoDot="digraph Grafo1 {\nrankdir = LR\nnode[shape=rectangle]\nedge[constraint=false]\n";
-    string codigoDot="digraph Grafo1 {\nrankdir = \"LR\"\nlabel=\""+titulo+"\""+"\nnode[shape=rectangle]\nedge[constraint=false]\n";
+   
+    //Encabezado
+    string codigoDot="digraph Grafo1 {\nrankdir = \"LR\"\nlabel=\""+titulo+"\"\n";
+    codigoDot+="labelloc=\"t\"\n";
+    codigoDot+="node[shape=rectangle]\n";//atributos del los nodos
+    codigoDot+="edge[constraint=false]\n"; // atributos de los 
     if (CircularDoble::estaVacia()){
         cout<<"La lista circular doble esta vacia\n"<<endl;
     }
@@ -244,7 +248,6 @@ Avion CircularDoble::buscarPorNumeroDeRegistro(string numeroDeRegistro) {
     cout << "No se encontro un avion con el numero de registro " << numeroDeRegistro << endl;
     return Avion();
 }
-
 
 CircularDoble::~CircularDoble()
 {
