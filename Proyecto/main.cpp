@@ -1,9 +1,9 @@
 //clases
 #include "Avion.h"
 #include "Piloto.h"
-//listas
+//Estructuras
 #include "CircularDoble.h"
-
+#include "ArbolBB.h"
 //librerias
 #include <iostream>
 #include <fstream>
@@ -17,6 +17,7 @@ using json = nlohmann::json;
 
 
 CircularDoble AvionesMantenimiento;
+ArbolBB arbolBBpilotos;
 
 void cargarAviones(string nombreArchivo){
 
@@ -112,7 +113,8 @@ void cargaPilotos(string nombreArchivo) {
         string licencia=item["tipo_de_licencia"].get<string>();
 
         Piloto pilotoNuevo(nombre,nacionalidad,numero_de_id,numero_vuelo,horasDeVuelo,licencia);
-        cout << pilotoNuevo.ToString() << endl;
+        arbolBBpilotos.insertar(pilotoNuevo);
+        cout << "Piloto "+pilotoNuevo.getNumero_de_id()+" ingresado al arbol binario" << endl;
     }  
 }
 
@@ -145,6 +147,7 @@ void visualizarReportes() {
     AvionesMantenimiento.visualizarLista();
     cout << "======REPORTES DOT.======" << endl;
     AvionesMantenimiento.generarReporte("Aviones_Mantenimiento");
+    arbolBBpilotos.generarReporte("ArbolBinario_Horas");
     
 }
 
@@ -166,16 +169,18 @@ void consultarHorasVuelo(){
         switch (opcion){
             
             case 1:
-               
+                cout << "======Recorrido Preorder(R.I.D)======" << endl;
+                arbolBBpilotos.RecorridoPreorder();
                 break;
            
             case 2:
-                
-                
+                cout << "======Recorrido Inorder======(I.R.D.)" << endl;
+                arbolBBpilotos.RecorridoInorder();
                 break;
           
             case 3:
-                
+                cout << "======Recorrido Postorder(I.D.R)======" << endl;
+                arbolBBpilotos.RecorridoPostorder();
                 break;
            
             case 4:
