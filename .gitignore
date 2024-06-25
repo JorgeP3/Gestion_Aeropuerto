@@ -3,12 +3,10 @@ Enunciado_Práctica_EDD.pdf
 Manual Tecnico.docx
 *.exe
 **.vscode/
-Aviones_Mantenimiento.dot
-Aviones_Mantenimiento.svg
 ~$nual Tecnico.docx
 Enunciado_Proyecto_EDD.pdf
 Matrizdispersaejemplo.dot
 bitacora de laboratorios.txt
 Dudas.txt
-ArbolBinario_Horas.svg
-ArbolBinario_Horas.dot
+**output/
+Analisis Matriz.xlsx

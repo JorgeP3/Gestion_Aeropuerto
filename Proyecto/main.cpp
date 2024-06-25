@@ -4,6 +4,7 @@
 //Estructuras
 #include "CircularDoble.h"
 #include "ArbolBB.h"
+#include "Matriz.h"
 //librerias
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,7 @@ using json = nlohmann::json;
 
 CircularDoble AvionesMantenimiento;
 ArbolBB arbolBBpilotos;
+Matriz matrizPilotos;
 
 void cargarAviones(string nombreArchivo){
 
@@ -116,6 +118,11 @@ void cargaPilotos(string nombreArchivo) {
         arbolBBpilotos.insertar(pilotoNuevo);
         cout << "Piloto "+pilotoNuevo.getNumero_de_id()+" ingresado al arbol binario" << endl;
     }  
+
+    matrizPilotos.insertar("P01234","A100","Colombia");
+    matrizPilotos.insertar("P01234","A200","Colombia");
+    matrizPilotos.insertar("P00003","A300","Guatemala");
+
 }
 
 void cargaMovimientos(string nombreArchivo) {
@@ -140,15 +147,15 @@ void cargaMovimientos(string nombreArchivo) {
 
 }
 
-
 void visualizarReportes() {
 
     cout << "======LISTA DE AVIONES EN MANTENIMIENTO======" << endl;
     AvionesMantenimiento.visualizarLista();
     cout << "======REPORTES DOT.======" << endl;
     AvionesMantenimiento.generarReporte("Aviones_Mantenimiento");
-    arbolBBpilotos.generarReporte("ArbolBinario_Horas");
-    
+    //arbolBBpilotos.generarReporte("ArbolBinario_Horas");
+    //matrizPilotos.generarReporte("Matriz_Dispersa");
+    matrizPilotos.imprimirMatriz();
 }
 
 void consultarHorasVuelo(){
