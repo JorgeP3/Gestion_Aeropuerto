@@ -241,28 +241,101 @@ void Matriz::generarReporte(string titulo){
         filaActual=root->getAbajo();//segunda fila
         while (filaActual!=nullptr)
         {
+            NodoMatriz* nodoActual = filaActual->getSiguiente();
             codigoDot+=filaActual->getFila()+"->";//imprime la cabecera fila
-            columnaActual = root->getSiguiente();//columna2
-
-            while (columnaActual!=nullptr)
+            
+            while (nodoActual != nullptr)
             {
-                codigoDot+=to_string(columnaActual->getDato().getHoras_de_vuelo());
+                string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());
+                codigoDot+=horas_vuelo;
 
-                if (columnaActual->getSiguiente()!=nullptr)
+                if (nodoActual->getSiguiente()!=nullptr)
                 {
                     codigoDot+="->";
-                    columnaActual=columnaActual->getSiguiente();
+                    nodoActual=nodoActual->getSiguiente();
+                }else{
+                    codigoDot+="\n";
+                    break;
+                } 
+            }
+            while (nodoActual != nullptr)
+            {
+                string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());
+                codigoDot+=horas_vuelo+"->";
+                                                        //condicion de salida para cuando encuentre la fila
+                if (nodoActual->getAnterior()!=nullptr && nodoActual->getAnterior()->getDatoString()!="Fila")
+                {
+                    nodoActual=nodoActual->getAnterior();
+                }else{
+                    codigoDot+=filaActual->getFila()+"\n";
+                    break;
+                } 
+            }
+
+
+            filaActual=filaActual->getAbajo();
+        }
+
+        //imprimir relaciones verticales
+        codigoDot+= "/*------------Relaciones verticales------------*/\n";
+        filaActual=root;
+
+            //CABECERAS FILAS
+                //apuntadores abajo
+        while (filaActual!=nullptr)
+        {
+            codigoDot+=filaActual->getFila();
+
+            if (filaActual->getAbajo()!=nullptr)
+            {
+                codigoDot+="->";
+                filaActual=filaActual->getAbajo();
+            }else{
+                codigoDot+="\n";
+                break;
+            } 
+        }
+                //apuntadires arriba
+        while (filaActual!=nullptr)
+        {
+            codigoDot+=filaActual->getFila();
+
+            if (filaActual->getArriba()!=nullptr)
+            {
+                codigoDot+="->";
+                filaActual=filaActual->getArriba();
+            }else{
+                codigoDot+="\n";
+                break;
+            } 
+        }
+
+                //relaciones de los nodos
+
+        columnaActual=root->getSiguiente();//segunda columna
+        while (filaActual!=nullptr)
+        {
+            NodoMatriz* nodoActual = filaActual->getSiguiente();
+            codigoDot+=filaActual->getFila()+"->";//imprime la cabecera columna
+            
+            while (nodoActual != nullptr)
+            {
+                string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());
+                codigoDot+=horas_vuelo;
+
+                if (nodoActual->getSiguiente()!=nullptr)
+                {
+                    codigoDot+="->";
+                    nodoActual=nodoActual->getSiguiente();
                 }else{
                     codigoDot+="\n";
                     break;
                 } 
             }
 
-
-
-
-            filaActual=filaActual->getAbajo();
+            columnaActual=columnaActual->getSiguiente();
         }
+
         
 
         codigoDot+="\n}";
