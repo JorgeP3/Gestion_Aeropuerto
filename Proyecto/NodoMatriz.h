@@ -1,12 +1,14 @@
 #include <iostream>
 #include <string.h>
+#include "Piloto.h"
 using namespace std;
 
 class NodoMatriz
 {
 private:
     /* data */
-    string dato;
+    Piloto dato;
+    string datoString;
     string fila, columna;
     NodoMatriz* anterior;
     NodoMatriz* siguiente;
@@ -15,10 +17,13 @@ private:
     
 public:
     NodoMatriz(/* args */);
-    NodoMatriz(string dato, string fila, string columna);
+    NodoMatriz(Piloto dato, string fila, string columna);
+    NodoMatriz(string datoString, string fila, string columna);
 
-    string getDato();
-    void setDato(string dato);
+    string getDatoString();
+
+    Piloto getDato();
+    void setDato(Piloto dato);
     string getFila();
     void setFila(string fila);
     string getColumna();
@@ -39,8 +44,15 @@ NodoMatriz::NodoMatriz(/* args */)
 {
 
 }
+NodoMatriz::NodoMatriz(string datoString, string fila, string columna)//constructor para string
+{
+    this->datoString = datoString;
+    this->fila = fila;
+    this->columna = columna;
+    anterior = siguiente = arriba = abajo = nullptr;
+}
 
-NodoMatriz::NodoMatriz(string dato, string fila, string columna)
+NodoMatriz::NodoMatriz(Piloto dato, string fila, string columna)//constructor para objetos
 {
     this->dato = dato;
     this->fila = fila;
@@ -111,11 +123,15 @@ void NodoMatriz::setColumna(string columna)
     this->columna = columna;
 }
 
-string NodoMatriz::getDato(){
+Piloto NodoMatriz::getDato(){
     return dato;
 }
 
-void NodoMatriz::setDato(string dato)
+string NodoMatriz::getDatoString(){
+    return datoString;
+}
+
+void NodoMatriz::setDato(Piloto dato)
 {
     this->dato = dato;
 }

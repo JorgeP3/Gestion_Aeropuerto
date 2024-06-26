@@ -119,10 +119,6 @@ void cargaPilotos(string nombreArchivo) {
         cout << "Piloto "+pilotoNuevo.getNumero_de_id()+" ingresado al arbol binario" << endl;
     }  
 
-    matrizPilotos.insertar("P01234","A100","Colombia");
-    matrizPilotos.insertar("P01234","A200","Colombia");
-    matrizPilotos.insertar("P00003","A300","Guatemala");
-
 }
 
 void cargaMovimientos(string nombreArchivo) {
@@ -154,8 +150,15 @@ void visualizarReportes() {
     cout << "======REPORTES DOT.======" << endl;
     AvionesMantenimiento.generarReporte("Aviones_Mantenimiento");
     //arbolBBpilotos.generarReporte("ArbolBinario_Horas");
-    //matrizPilotos.generarReporte("Matriz_Dispersa");
-    matrizPilotos.imprimirMatriz();
+    Piloto piloto1("","","P0001","",600,"");
+    Piloto piloto2("","","P0002","",500,"");
+    Piloto piloto3("","","P0003","",650,"");
+    matrizPilotos.insertar(piloto1,"A100","Colombia");
+    matrizPilotos.insertar(piloto2,"A200","Argentina");
+    matrizPilotos.insertar(piloto3,"A300","Guatemala");
+
+    matrizPilotos.generarReporte("Matriz_Dispersa");
+    //matrizPilotos.imprimirMatriz();
 }
 
 void consultarHorasVuelo(){

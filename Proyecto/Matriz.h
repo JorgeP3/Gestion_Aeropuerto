@@ -1,5 +1,8 @@
 #include <iostream>
 #include <string.h>
+#include <iostream>
+#include <fstream> //cabecera para manejar archivos (leer y escribir)
+#include <cstdlib> 
 using namespace std;
 #include "NodoMatriz.h"
 
@@ -14,7 +17,7 @@ public:
     NodoMatriz* buscarColumna(string columna, NodoMatriz* inicio);
     NodoMatriz* crearFila(string fila);
     NodoMatriz* crearColumna(string columna);
-    void insertar(string dato, string fila, string columna);
+    void insertar(Piloto dato, string fila, string columna);
     void generarReporte(string titulo);
     void recorrerMatriz();
     void imprimirMatriz();
@@ -80,7 +83,7 @@ NodoMatriz* Matriz::crearColumna(string columna)
     return c;
 }
 
-void Matriz::insertar(string dato, string fila, string columna)
+void Matriz::insertar(Piloto dato, string fila, string columna)
 {
     NodoMatriz* NodoMatrizDato = new NodoMatriz(dato, fila, columna);//el nodo que voy a insertar
     NodoMatriz* NodoMatrizFila; //Para saber en que fila insertar
@@ -161,32 +164,121 @@ void Matriz::generarReporte(string titulo){
     {
         cout << "La matriz esta vacia" << endl;
     }else{
-        NodoMatriz *actual=root;
+        
+       
         //Encabezado
         string codigoDot="digraph Grafo1 {\nrankdir = \"TB\"\nlabel=\""+titulo+"\"\n";
         codigoDot+="labelloc=\"t\"\n";
         codigoDot+="node[shape=rectangle]\n";//atributos del los nodos
         codigoDot+="edge[]\n"; // atributos de las aristas
-        //codigoDot+="-1[label=\"root\"]";
-        do{
-            string numero_registro=actual->getColumna();
-            codigoDot+=numero_registro+"\n";
-            actual=actual->getSiguiente();
-        }while (actual!=nullptr);
-        actual=root;
-        do{
-            string numero_registro=actual->getColumna();
-            codigoDot+=numero_registro;
-            actual=actual->getSiguiente();
-            if (actual != nullptr)
-            {   
+        
+        //imprimir las cabeceras de las columnas
+        NodoMatriz *columnaActual=root;
+        codigoDot+= "/*------------Cabeceras columnas------------*/\n";
+        while (columnaActual!=nullptr)
+        {
+            codigoDot+=columnaActual->getColumna()+"\n";
+            columnaActual=columnaActual->getSiguiente();
+        }
+
+        //imprimir las cabeceras filas
+        NodoMatriz *filaActual=root;
+        codigoDot+= "/*------------Cabeceras filas------------*/\n";
+        while (filaActual!=nullptr)
+        {
+            codigoDot+=filaActual->getFila()+"\n";
+            filaActual=filaActual->getAbajo();
+        }
+        //nodos
+        codigoDot+= "/*------------Nodos-----------*/\n";
+        filaActual = root->getAbajo(); // Empieza desde el primer encabezado de fila
+        while (filaActual != nullptr) {
+            NodoMatriz* nodoActual = filaActual->getSiguiente(); // Empieza desde el primer nodo en la fila
+            while (nodoActual != nullptr) {
+                string numero_id=nodoActual->getDato().getNumero_de_id();
+                string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());//se usa horas de vuelo por que es algo unico
+                codigoDot+=horas_vuelo+"[label=\""+numero_id+"\"]"+"\n";//ESTO SE CAMBIARA
+                nodoActual = nodoActual->getSiguiente(); // Avanza al siguiente nodo en la fila
+            }
+            filaActual = filaActual->getAbajo(); // Avanza al siguiente encabezado de fila
+        }   
+
+        //imprimir relaciones horizontales
+        codigoDot+= "/*------------Relaciones horizontales------------*/\n";
+        columnaActual=root;
+
+            //CABECERAS COLUMNAS
+                //apuntadores siguientes
+        while (columnaActual!=nullptr)
+        {
+            codigoDot+=columnaActual->getColumna();
+
+            if (columnaActual->getSiguiente()!=nullptr)
+            {
                 codigoDot+="->";
+                columnaActual=columnaActual->getSiguiente();
+            }else{
+                codigoDot+="\n";
+                break;
+            } 
+        }
+                //apuntadores anteriores
+        while (columnaActual!=nullptr)
+        {
+            codigoDot+=columnaActual->getColumna();
+
+            if (columnaActual->getAnterior()!=nullptr)
+            {
+                codigoDot+="->";
+                columnaActual=columnaActual->getAnterior();
+            }else{
+                codigoDot+="\n";
+                break;
+            } 
+        }
+            //relaciones de los nodos
+
+        filaActual=root->getAbajo();//segunda fila
+        while (filaActual!=nullptr)
+        {
+            codigoDot+=filaActual->getFila()+"->";//imprime la cabecera fila
+            columnaActual = root->getSiguiente();//columna2
+
+            while (columnaActual!=nullptr)
+            {
+                codigoDot+=to_string(columnaActual->getDato().getHoras_de_vuelo());
+
+                if (columnaActual->getSiguiente()!=nullptr)
+                {
+                    codigoDot+="->";
+                    columnaActual=columnaActual->getSiguiente();
+                }else{
+                    codigoDot+="\n";
+                    break;
+                } 
             }
 
-        }while (actual!=nullptr);
+
+
+
+            filaActual=filaActual->getAbajo();
+        }
         
+
         codigoDot+="\n}";
-        cout << codigoDot << endl;
+        //Creacion del archivo
+        ofstream archivo; //
+        archivo.open(titulo+".dot", ios::out);
+        archivo<<codigoDot;
+        archivo.close();
+        //renderizar el dot
+        string comandoRenderizar="dot -Tsvg "+titulo+".dot -o "+titulo+".svg";
+        const char* comandoRenderizar_cstr=comandoRenderizar.c_str();
+        system(comandoRenderizar_cstr);
+        //abrir el dot
+        string open_command="start "+titulo+".svg";
+        system(open_command.c_str());
+        
     }
     
 }
@@ -211,7 +303,7 @@ void Matriz::imprimirMatriz() {
             bool found = false;
             while (nodoActual != nullptr) {
                 if (nodoActual->getColumna() == columnaActual->getColumna()) {
-                    cout << "|" << nodoActual->getDato();
+                    cout << "|" << nodoActual->getDato().getNumero_de_id();
                     found = true;
                     break;
                 }
@@ -244,3 +336,25 @@ void Matriz::recorrerMatriz() {
 Matriz::~Matriz()
 {
 }
+
+
+
+        
+        /*
+        do{
+            string numero_registro=actual->getColumna();
+            codigoDot+=numero_registro+"\n";
+            actual=actual->getSiguiente();
+        }while (actual!=nullptr);
+        actual=root;
+        do{
+            string numero_registro=actual->getColumna();
+            codigoDot+=numero_registro;
+            actual=actual->getSiguiente();
+            if (actual != nullptr)
+            {   
+                codigoDot+="->";
+            }
+
+        }while (actual!=nullptr);
+        */
