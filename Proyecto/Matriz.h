@@ -195,20 +195,18 @@ void Matriz::generarReporte(string titulo){
         codigoDot+= "/*------------Nodos-----------*/\n";
 
          
-        columnaActual = root->getSiguiente(); // Empieza desde el primer encabezado de fila
-        
-        while (filaActual != nullptr) {
-            contador=2;
-            NodoMatriz* nodoActual = filaActual->getSiguiente(); // Empieza desde el primer nodo en la fila
+        columnaActual = root->getSiguiente(); // Empieza desde el primer encabezado de columna
+        contador=2;
+        while (columnaActual != nullptr) {
+            NodoMatriz* nodoActual = columnaActual->getAbajo(); // Empieza desde el primer nodo en la columna
             while (nodoActual != nullptr) {
                 string numero_id=nodoActual->getDato().getNumero_de_id();
                 string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());//se usa horas de vuelo por que es algo unico
                 codigoDot+=horas_vuelo+"[label=\""+numero_id+"\" group="+to_string(contador)+"]\n";
-                nodoActual = nodoActual->getSiguiente(); // Avanza al siguiente nodo en la fila
-                contador=contador+1;
+                nodoActual = nodoActual->getAbajo(); // Avanza al siguiente nodo en la fila
             }
-            columnaActual = columnaActual->getSiguiente(); // Avanza al siguiente encabezado de fila
-            
+            columnaActual = columnaActual->getSiguiente(); // Avanza al siguiente encabezado de columna
+            contador=contador+1;
         } 
 
 
