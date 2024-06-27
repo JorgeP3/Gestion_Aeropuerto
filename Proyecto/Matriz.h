@@ -175,10 +175,12 @@ void Matriz::generarReporte(string titulo){
         //imprimir las cabeceras de las columnas
         NodoMatriz *columnaActual=root;
         codigoDot+= "/*------------Cabeceras columnas------------*/\n";
+        int contador=1;
         while (columnaActual!=nullptr)
         {
-            codigoDot+=columnaActual->getColumna()+"\n";
+            codigoDot+=columnaActual->getColumna()+"[group="+to_string(contador)+"]\n";
             columnaActual=columnaActual->getSiguiente();
+            contador=contador+1;
         }
 
         //imprimir las cabeceras filas
@@ -186,22 +188,46 @@ void Matriz::generarReporte(string titulo){
         codigoDot+= "/*------------Cabeceras filas------------*/\n";
         while (filaActual!=nullptr)
         {
-            codigoDot+=filaActual->getFila()+"\n";
+            codigoDot+=filaActual->getFila()+"[group=1]\n";
             filaActual=filaActual->getAbajo();
         }
         //nodos
         codigoDot+= "/*------------Nodos-----------*/\n";
-        filaActual = root->getAbajo(); // Empieza desde el primer encabezado de fila
+
+         
+        columnaActual = root->getSiguiente(); // Empieza desde el primer encabezado de fila
+        
         while (filaActual != nullptr) {
+            contador=2;
             NodoMatriz* nodoActual = filaActual->getSiguiente(); // Empieza desde el primer nodo en la fila
             while (nodoActual != nullptr) {
                 string numero_id=nodoActual->getDato().getNumero_de_id();
                 string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());//se usa horas de vuelo por que es algo unico
-                codigoDot+=horas_vuelo+"[label=\""+numero_id+"\"]"+"\n";//ESTO SE CAMBIARA
+                codigoDot+=horas_vuelo+"[label=\""+numero_id+"\" group="+to_string(contador)+"]\n";
                 nodoActual = nodoActual->getSiguiente(); // Avanza al siguiente nodo en la fila
+                contador=contador+1;
+            }
+            columnaActual = columnaActual->getSiguiente(); // Avanza al siguiente encabezado de fila
+            
+        } 
+
+
+        /*
+        filaActual = root->getAbajo(); // Empieza desde el primer encabezado de fila
+        
+        while (filaActual != nullptr) {
+            contador=2;
+            NodoMatriz* nodoActual = filaActual->getSiguiente(); // Empieza desde el primer nodo en la fila
+            while (nodoActual != nullptr) {
+                string numero_id=nodoActual->getDato().getNumero_de_id();
+                string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());//se usa horas de vuelo por que es algo unico
+                codigoDot+=horas_vuelo+"[label=\""+numero_id+"\" group="+to_string(contador)+"]\n";
+                nodoActual = nodoActual->getSiguiente(); // Avanza al siguiente nodo en la fila
+                contador=contador+1;
             }
             filaActual = filaActual->getAbajo(); // Avanza al siguiente encabezado de fila
-        }   
+            
+        } */  
 
         //imprimir relaciones horizontales
         codigoDot+= "/*------------Relaciones horizontales------------*/\n";
@@ -313,30 +339,80 @@ void Matriz::generarReporte(string titulo){
                 //relaciones de los nodos
 
         columnaActual=root->getSiguiente();//segunda columna
-        while (filaActual!=nullptr)
+        while (columnaActual!=nullptr)
         {
-            NodoMatriz* nodoActual = filaActual->getSiguiente();
-            codigoDot+=filaActual->getFila()+"->";//imprime la cabecera columna
+            NodoMatriz* nodoActual = columnaActual->getAbajo();
+            codigoDot+=columnaActual->getColumna()+"->";
             
             while (nodoActual != nullptr)
             {
                 string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());
                 codigoDot+=horas_vuelo;
 
-                if (nodoActual->getSiguiente()!=nullptr)
+                if (nodoActual->getAbajo()!=nullptr)
                 {
                     codigoDot+="->";
-                    nodoActual=nodoActual->getSiguiente();
+                    nodoActual=nodoActual->getAbajo();
                 }else{
                     codigoDot+="\n";
                     break;
                 } 
             }
-
+            while (nodoActual != nullptr)
+            {
+                string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo());
+                codigoDot+=horas_vuelo+"->";
+                                                        //condicion de salida para cuando encuentre la fila
+                if (nodoActual->getArriba()!=nullptr && nodoActual->getArriba()->getDatoString()!="Columna")
+                {
+                    nodoActual=nodoActual->getArriba();
+                }else{
+                    codigoDot+=columnaActual->getColumna()+"\n";
+                    break;
+                } 
+            }
             columnaActual=columnaActual->getSiguiente();
         }
 
-        
+        //alineacion =relaciones horizontales
+        codigoDot+= "/*------------encuadre------------*/\n";
+        columnaActual=root;
+        codigoDot+="{rank=same; ";
+        while (columnaActual!=nullptr)
+        {
+            codigoDot+=columnaActual->getColumna()+"; ";
+
+            if (columnaActual->getSiguiente()!=nullptr)
+            {
+                columnaActual=columnaActual->getSiguiente();
+            }else{
+                codigoDot+="}\n";
+                break;
+            } 
+        }
+
+        filaActual=root->getAbajo();//segunda fila
+        while (filaActual!=nullptr)
+        {
+            NodoMatriz* nodoActual = filaActual->getSiguiente();
+            codigoDot+="{rank=same; "+filaActual->getFila()+"; ";//imprime la cabecera fila
+            
+            while (nodoActual != nullptr)
+            {
+                string horas_vuelo=to_string(nodoActual->getDato().getHoras_de_vuelo())+"; ";
+                codigoDot+=horas_vuelo;
+
+                if (nodoActual->getSiguiente()!=nullptr)
+                {
+                    nodoActual=nodoActual->getSiguiente();
+                }else{
+                    codigoDot+="}\n";
+                    break;
+                } 
+            }
+            filaActual=filaActual->getAbajo();
+        }
+
 
         codigoDot+="\n}";
         //Creacion del archivo
@@ -350,8 +426,7 @@ void Matriz::generarReporte(string titulo){
         system(comandoRenderizar_cstr);
         //abrir el dot
         string open_command="start "+titulo+".svg";
-        system(open_command.c_str());
-        
+        system(open_command.c_str()); 
     }
     
 }

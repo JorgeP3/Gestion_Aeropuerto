@@ -153,9 +153,14 @@ void visualizarReportes() {
     Piloto piloto1("","","P0001","",600,"");
     Piloto piloto2("","","P0002","",500,"");
     Piloto piloto3("","","P0003","",650,"");
+    Piloto piloto4("","","P0004","",320,"");
+    Piloto piloto5("","","P0005","",321,"");
     matrizPilotos.insertar(piloto1,"A100","Colombia");
+    matrizPilotos.insertar(piloto4,"A200","Colombia");
     matrizPilotos.insertar(piloto2,"A200","Argentina");
+    matrizPilotos.insertar(piloto5,"A200","Guatemala");
     matrizPilotos.insertar(piloto3,"A300","Guatemala");
+   
 
     matrizPilotos.generarReporte("Matriz_Dispersa");
     //matrizPilotos.imprimirMatriz();
