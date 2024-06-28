@@ -15,6 +15,7 @@ public:
     void eliminarInicio();
     void eliminarFinal();
     void visualizarLista();
+    string txt_lista();
     ~ListaSimple();
 };
 
@@ -140,7 +141,28 @@ void ListaSimple::visualizarLista()
     }
     
 }
+string ListaSimple::txt_lista(){
+    if (ListaSimple::estaVacia())
+    {
+        return " ";
+    }
+    else
+    {
+        string codigoDot="";
+        Piloto nodoDato;
+        NodoS *actual = primero;
+        while (actual != nullptr)
+        {
+            /* code */
+            nodoDato = actual->getDato();
+            //cout << nodoSNodoSDato << endl;
+            codigoDot+= nodoDato.getNumero_de_id()+(actual->getSiguiente() != nullptr ? " -> ": "\n");
+            actual = actual->getSiguiente();
+        }
+        return codigoDot;
+    }
 
+}
 
 ListaSimple::~ListaSimple()
 {

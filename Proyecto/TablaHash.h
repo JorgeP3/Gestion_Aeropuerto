@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream> 
+#include <cstdlib> 
 using namespace std;
 #include "ListaSimple.h"
 
@@ -14,7 +16,7 @@ public:
     int Clave(string valor);
     void Insertar(Piloto dato);
     void imprimirTabla();
-    void generarReporte();
+    void generarReporte(string titulo);
     ~TablaHash();
 };
 
@@ -32,7 +34,6 @@ TablaHash::TablaHash(/* args */)
 int TablaHash::Clave(string valorS)
 {
     int valorAscii=static_cast<int>(valorS[0]);
-    cout << "ASSI LETRA " << valorAscii << endl;
     int tamanoCad=valorS.size();
     int suma=0;
 
@@ -40,12 +41,10 @@ int TablaHash::Clave(string valorS)
     {
         suma+=(valorS[i])-'0';
     }
-    cout << "SUMA " << suma << endl;
-    
     int valor=valorAscii+suma;
     int i;
     i = (int)(valor % tamTabla);
-    cout << "Llave asignada: " << i << endl;
+    
     return i;
 }
 
@@ -60,14 +59,55 @@ void TablaHash::imprimirTabla()
 {
     for (int i = 0; i < tamTabla; i++)
     {
-        cout << "[" << i << "] -> ";
-        tabla[i].visualizarLista();
+        cout << "[" << i << "]";
+        if (!tabla[i].estaVacia()){
+            cout << "->";
+            tabla[i].visualizarLista();
+        }else{
+            cout << "\n";
+        }
     }
-    
 }
 
-void TablaHash::generarReporte(){
+void TablaHash::generarReporte(string titulo){
+    string codigoDot="digraph Grafo1 {\nrankdir = \"LR\"\nlabel=\""+titulo+"\"\n";
+    codigoDot+="labelloc=\"t\"\n";
+    codigoDot+="node[shape=plaintext]\n";//atributos del los nodos
+    codigoDot+="edge[]\n"; // atributos de las aristas
 
+    //ARREGLO
+    codigoDot+="hash_table[label=<";
+    codigoDot+="<TABLE BORDER=\"0\" CELLBORDER=\"1\" CELLSPACING=\"0\">";
+    for (int i = 0; i < tamTabla; i++)
+    {
+        codigoDot+= "<TR><TD PORT=\"index"+to_string(i)+"\" WIDTH=\"30\" HEIGHT=\"55\">"+to_string(i)+"</TD></TR>\n";
+        
+    }
+    codigoDot+="</TABLE>\n>];\n\n";
+
+    //Listas
+    codigoDot+="node [shape=rectangle]\n\n";
+    for (int i = 0; i < tamTabla; i++)
+    {
+        if (!tabla[i].estaVacia()){
+            codigoDot+="hash_table:index"+to_string(i)+"->"+tabla[i].txt_lista();  
+        }
+    }
+
+
+    codigoDot+="\n}";
+    //Creacion del archivo
+    ofstream archivo; //
+    archivo.open(titulo+".dot", ios::out);
+    archivo<<codigoDot;
+    archivo.close();
+    //renderizar el dot
+    string comandoRenderizar="dot -Tsvg "+titulo+".dot -o "+titulo+".svg";
+    const char* comandoRenderizar_cstr=comandoRenderizar.c_str();
+    system(comandoRenderizar_cstr);
+    //abrir el dot
+    string open_command="start "+titulo+".svg";
+    system(open_command.c_str());
 }
 
 

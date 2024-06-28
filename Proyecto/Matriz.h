@@ -1,4 +1,3 @@
-#include <iostream>
 #include <string.h>
 #include <iostream>
 #include <fstream> //cabecera para manejar archivos (leer y escribir)
