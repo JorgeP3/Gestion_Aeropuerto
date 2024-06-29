@@ -17,6 +17,7 @@ public:
     void Insertar(Piloto dato);
     void imprimirTabla();
     void generarReporte(string titulo);
+    void eliminarPiloto(string numero_id);
     ~TablaHash();
 };
 
@@ -110,6 +111,12 @@ void TablaHash::generarReporte(string titulo){
     system(open_command.c_str());
 }
 
+void TablaHash::eliminarPiloto(string numero_id){
+
+    int indice = Clave(numero_id);
+    tabla[indice].eliminarPorId(numero_id);
+
+}
 
 
 

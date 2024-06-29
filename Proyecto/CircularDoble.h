@@ -25,6 +25,7 @@ public:
     void generarReporte(string titulo);
     void eliminarPorNumeroDeRegistro(string numeroDeRegistro);
     Avion buscarPorNumeroDeRegistro(string numeroDeRegistro);
+    string buscarPorNumeroDeVuelo(string vuelo);
     void ordenar();
     ~CircularDoble();
 };
@@ -247,6 +248,25 @@ Avion CircularDoble::buscarPorNumeroDeRegistro(string numeroDeRegistro) {
 
     cout << "No se encontro un avion con el numero de registro " << numeroDeRegistro << endl;
     return Avion();
+}
+
+string CircularDoble::buscarPorNumeroDeVuelo(string vuelo) {//esto metodo al ingresarle un vuelo lo busca y devuelve su ciuda
+    if (CircularDoble::estaVacia()){
+        cout<<"La lista circular doble esta vacia"<<endl;
+        // Devolver un objeto Avion predeterminado o especial
+        return Avion().getCiudadDestino();
+    }
+
+    NodoAvion *actual = primero;
+    do {
+        if (actual->getDato().getVuelo() == vuelo) {
+            return actual->getDato().getCiudadDestino();
+        }
+        actual = actual->getSiguiente();
+    } while (actual != primero);
+
+    cout << "No se encontro un avion con el numero de registro " << vuelo << endl;
+    return Avion().getCiudadDestino();
 }
 
 CircularDoble::~CircularDoble()

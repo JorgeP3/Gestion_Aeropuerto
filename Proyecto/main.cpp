@@ -5,6 +5,7 @@
 #include "CircularDoble.h"
 #include "ArbolBB.h"
 #include "Matriz.h"
+#include "TablaHash.h"
 //librerias
 #include <iostream>
 #include <fstream>
@@ -16,10 +17,11 @@ using namespace std;
 #include "json.hpp"
 using json = nlohmann::json;
 
-
+CircularDoble avionesDisponibles;
 CircularDoble AvionesMantenimiento;
 ArbolBB arbolBBpilotos;
 Matriz matrizPilotos;
+TablaHash tablahashPilotos;
 
 void cargarAviones(string nombreArchivo){
 
@@ -39,19 +41,18 @@ void cargarAviones(string nombreArchivo){
         string estado= item["estado"].get<string>();
         //CARGA DE AVIONES DISPONIBLES
         if (estado=="Disponible"||estado=="disponible"){
-            /*
+        
             string vuelo=item["vuelo"].get<std::string>();
             string numero_de_registro=item["numero_de_registro"].get<std::string>();
             string modelo=item["modelo"].get<std::string>();
-            string fabricante=item["fabricante"].get<std::string>();
-            int anio_fabricacion= item["ano_fabricacion"].get<int>();
             int capacidad=item["capacidad"].get<int>();
-            int peso_max_despegue=item["peso_max_despegue"].get<int>();
             string aerolinea=item["aerolinea"].get<std::string>();
+            string ciudad_destino=item["ciudad_destino"].get<std::string>();
             string estado=item["estado"].get<std::string>();
-            */
-            
-            //cout << "Avion disponible cargado correctamente" << endl;
+
+            Avion avionNuevo(vuelo,numero_de_registro,modelo,capacidad,aerolinea,ciudad_destino,estado);
+            avionesDisponibles.insertarFinal(avionNuevo);
+            cout << "Avion disponible cargado correctamente" << endl;
         //CARGA DE AVIONES en mantenimiento
         }else if(estado=="Mantenimiento"||estado=="mantenimiento"){
             string vuelo=item["vuelo"].get<std::string>();
@@ -116,7 +117,24 @@ void cargaPilotos(string nombreArchivo) {
 
         Piloto pilotoNuevo(nombre,nacionalidad,numero_de_id,numero_vuelo,horasDeVuelo,licencia);
         arbolBBpilotos.insertar(pilotoNuevo);
-        cout << "Piloto "+pilotoNuevo.getNumero_de_id()+" ingresado al arbol binario" << endl;
+        tablahashPilotos.Insertar(pilotoNuevo);
+
+        string fila=pilotoNuevo.getVuelo();
+        string columna="";
+
+        if (avionesDisponibles.buscarPorNumeroDeVuelo(fila)!="")
+        {
+            columna=avionesDisponibles.buscarPorNumeroDeVuelo(fila);
+
+        }else if (AvionesMantenimiento.buscarPorNumeroDeVuelo(fila)!="")
+        {
+            columna=AvionesMantenimiento.buscarPorNumeroDeVuelo(fila);
+        }else{
+            cout << "No se encontro el avion con numero de vuelo " << fila <<endl;
+        }
+        
+        matrizPilotos.insertar(pilotoNuevo,fila,columna);
+
     }  
 
 }
@@ -135,8 +153,46 @@ void cargaMovimientos(string nombreArchivo) {
         if (linea.empty()) {
             continue; // Saltar líneas vacías
         }
-        vector<std::string> palabras =split(linea,",;");
+        vector<std::string> palabras =split(linea,",();");
         /*PROCESADO DEL COMANDO EQUIPAJES*/
+        if (palabras[0]=="DarDeBaja" || palabras[0]=="dardebaja")
+        {
+            string id_piloto=palabras[1];
+            
+            tablahashPilotos.eliminarPiloto(id_piloto);
+            
+        /*PROCESADO DEL MANTENIMIENTO DE AVIONES*/
+        }else if(palabras[0]=="MantenimientoAviones"||palabras[0]=="mantenimientoaviones"){
+            if (palabras[1]=="Ingreso" || palabras[1]=="ingreso")
+            {
+                string numero_registro=palabras[2];
+                Avion avionAcambiar=avionesDisponibles.buscarPorNumeroDeRegistro(numero_registro);
+                if (avionAcambiar.getNumeroDeRegistro()!="")//si devuelve un avion
+                {
+                    avionesDisponibles.eliminarPorNumeroDeRegistro(numero_registro);//lo elimino
+                    avionAcambiar.setEstado("Mantenimiento");//seteo su estado
+                    AvionesMantenimiento.insertarFinal(avionAcambiar);//lo agrego a la otra lista
+                    cout << "se ingreso un avion a la lista de mantenimiento y se elimino de la lista de disponibles " << endl;
+                }
+                
+
+            }else if(palabras[1]=="Salida" || palabras[1]=="salida") {
+                string numero_registro=palabras[2];
+                Avion avionAcambiar=AvionesMantenimiento.buscarPorNumeroDeRegistro(numero_registro);
+                if (avionAcambiar.getNumeroDeRegistro()!="")//si devuelve un avion
+                {
+                    AvionesMantenimiento.eliminarPorNumeroDeRegistro(numero_registro);//lo elimino
+                    avionAcambiar.setEstado("Disponible");//seteo su estado
+                    avionesDisponibles.insertarFinal(avionAcambiar);//lo agrego a la otra lista
+                    cout << "se elimino un avion de la lista de mantenimiento y se ingreso a la lista de disponibles" << endl;
+                }
+            }else{
+                cout << "no se reconocio el comando" << endl;
+            }
+        }else{
+            cout << "no se reconocio el comando" << endl;
+        }
+        
         
     }
     archivo.close();
@@ -148,24 +204,12 @@ void visualizarReportes() {
     cout << "======LISTA DE AVIONES EN MANTENIMIENTO======" << endl;
     AvionesMantenimiento.visualizarLista();
     cout << "======REPORTES DOT.======" << endl;
+    avionesDisponibles.generarReporte("Aviones_Disponibles");
     AvionesMantenimiento.generarReporte("Aviones_Mantenimiento");
-    //arbolBBpilotos.generarReporte("ArbolBinario_Horas");
-    Piloto piloto1("","","P0001","",600,"");
-    Piloto piloto2("","","P0002","",500,"");
-    Piloto piloto3("","","P0003","",650,"");
-    Piloto piloto4("","","P0004","",320,"");
-    Piloto piloto5("","","P0005","",321,"");
-    matrizPilotos.insertar(piloto1,"A100","Colombia");
-    //matrizPilotos.insertar(piloto4,"A200","Colombia");
-    //matrizPilotos.insertar(piloto2,"A200","Argentina");
-    //matrizPilotos.insertar(piloto5,"A200","Guatemala");
-    //matrizPilotos.insertar(piloto4,"A300","Argentina");
-    //matrizPilotos.insertar(piloto3,"A300","Guatemala");
-   
-   
-
+    arbolBBpilotos.generarReporte("ArbolBinario_Horas");
+    tablahashPilotos.generarReporte("Tabla_hash");
     matrizPilotos.generarReporte("Matriz_Dispersa");
-    //matrizPilotos.imprimirMatriz();
+    
 }
 
 void consultarHorasVuelo(){

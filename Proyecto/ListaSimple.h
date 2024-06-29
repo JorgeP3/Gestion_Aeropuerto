@@ -15,6 +15,7 @@ public:
     void eliminarInicio();
     void eliminarFinal();
     void visualizarLista();
+    void eliminarPorId(string munero_id);
     string txt_lista();
     ~ListaSimple();
 };
@@ -69,7 +70,7 @@ void ListaSimple::eliminarInicio()
     }
     else
     {
-        if (primero == ultimo)
+        if (primero == ultimo)//si solo hay un elemento
         {
             /* code */
             delete primero;
@@ -162,6 +163,45 @@ string ListaSimple::txt_lista(){
         return codigoDot;
     }
 
+}
+
+void ListaSimple::eliminarPorId(string numero_id)
+{
+    if (ListaSimple::estaVacia())
+    {
+        cout << "La lista está vacía" << endl;
+    }
+    else
+    {
+        NodoS* temporal = primero;
+        NodoS* anterior = nullptr;
+
+        while (temporal != nullptr)
+        {
+            if (temporal->getDato().getNumero_de_id() == numero_id) // Si encontramos el elemento con el ID buscado
+            {
+                if (temporal == primero) // Si es el primer elemento
+                {
+                    eliminarInicio();
+                }
+                else if (temporal == ultimo) // Si es el último elemento
+                {
+                    eliminarFinal();
+                }
+                else // Si está en medio de la lista
+                {
+                    anterior->setSiguiente(temporal->getSiguiente());
+                    delete temporal;
+                }
+                return; // Salimos del método después de eliminar el elemento
+            }
+
+            anterior = temporal;
+            temporal = temporal->getSiguiente();
+        }
+
+        cout << "No se encontró ningún elemento con el ID " << numero_id << endl;
+    }
 }
 
 ListaSimple::~ListaSimple()
