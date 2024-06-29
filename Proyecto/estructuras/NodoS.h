@@ -1,6 +1,6 @@
 #ifndef NODOS_H
 #define NODOS_H
-#include "Piloto.h"
+#include "../clases/Piloto.h"
 #include <iostream>
 
 using namespace std;

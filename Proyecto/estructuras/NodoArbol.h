@@ -1,4 +1,4 @@
-#include "Piloto.h" 
+#include "../clases/Piloto.h" 
 #include <iostream>
 using namespace std;
 //este te nodo sera usado para guardar objetos tipo piloto

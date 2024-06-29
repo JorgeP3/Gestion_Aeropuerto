@@ -1,7 +1,7 @@
 #ifndef NODOAVION_H
 #define NODOAVION_H
 
-#include "Avion.h"
+#include "../clases/Avion.h"
 #include <iostream>
 using namespace std;
 

@@ -1,7 +1,7 @@
 
 //clases
 #include "NodoAvion.h"
-#include "Avion.h"
+#include "../clases/Avion.h"
 //librerias
 #include <iostream>
 #include <fstream> //cabecera para manejar archivos (leer y escribir)

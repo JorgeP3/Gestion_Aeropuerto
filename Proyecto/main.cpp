@@ -1,11 +1,13 @@
 //clases
-#include "Avion.h"
-#include "Piloto.h"
+#include "./clases/Avion.h"
+#include "./clases/Piloto.h"
 //Estructuras
-#include "CircularDoble.h"
-#include "ArbolBB.h"
-#include "Matriz.h"
-#include "TablaHash.h"
+#include "./estructuras/CircularDoble.h"
+#include "./estructuras/ArbolBB.h"
+#include "./estructuras/Matriz.h"
+#include "./estructuras/TablaHash.h"
+#include "./estructuras/Grafo.h"
+
 //librerias
 #include <iostream>
 #include <fstream>
@@ -22,6 +24,7 @@ CircularDoble AvionesMantenimiento;
 ArbolBB arbolBBpilotos;
 Matriz matrizPilotos;
 TablaHash tablahashPilotos;
+Grafo* grafoRutas=nullptr;
 
 void cargarAviones(string nombreArchivo){
 
@@ -199,6 +202,72 @@ void cargaMovimientos(string nombreArchivo) {
 
 }
 
+bool buscarCiudad(vector <string> ciudades,string ciudad){//devuelve true si ya existe y false si no
+    auto it = std::find(ciudades.begin(), ciudades.end(), ciudad);
+    if (it != ciudades.end()) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void cargarRutas(string nombreArchivo){
+    string path="C:\\Users\\lmpgp\\OneDrive\\Escritorio\\"+nombreArchivo;
+
+    ifstream archivo(path);
+    if (!archivo.is_open()) {
+        std::cerr << "No se pudo abrir el archivo: " << nombreArchivo << std::endl;
+        return;
+    }
+
+    vector<string> vectorCiudades;
+
+
+    string linea;
+    while (getline(archivo, linea)) {
+        if (linea.empty()) {
+            continue; // Saltar líneas vacías
+        }
+        vector<std::string> ciudad =split(linea,"/;");
+
+        if(!buscarCiudad(vectorCiudades,ciudad[0])){
+            vectorCiudades.push_back(ciudad[0]);
+        }
+
+        if(!buscarCiudad(vectorCiudades,ciudad[1])){
+            vectorCiudades.push_back(ciudad[1]);
+        }
+    }
+    archivo.close();
+
+    int numeroVertices=vectorCiudades.size();
+    grafoRutas=new Grafo(numeroVertices);
+
+    for (size_t i = 0; i < vectorCiudades.size(); i++)
+    {
+        grafoRutas->nuevoVertice(vectorCiudades[i]);
+    }
+    
+    
+    ifstream archivo1(path);
+    if (!archivo1.is_open()) {
+        std::cerr << "No se pudo abrir el archivo: " << nombreArchivo << std::endl;
+        return;
+    }
+
+    while (getline(archivo1, linea)) {
+        if (linea.empty()) {
+            continue; // Saltar líneas vacías
+        }
+        vector<std::string> ciudad =split(linea,"/;");
+
+        grafoRutas->nuevoArco(ciudad[0],ciudad[1],stoi(ciudad[2]));
+        
+    }
+    archivo1.close();
+    
+}
+
 void visualizarReportes() {
 
     cout << "======LISTA DE AVIONES EN MANTENIMIENTO======" << endl;
@@ -209,7 +278,8 @@ void visualizarReportes() {
     arbolBBpilotos.generarReporte("ArbolBinario_Horas");
     tablahashPilotos.generarReporte("Tabla_hash");
     matrizPilotos.generarReporte("Matriz_Dispersa");
-    
+    grafoRutas->generarReporte("Grafo_Rutas");
+    //grafoRutas->imprimirMatriz();
 }
 
 void consultarHorasVuelo(){
@@ -300,7 +370,13 @@ void menuPrincipal(){
                 break;
             //carga de rutas
             case 3:
+                {
+                string nombreArchivo="";
+                cout << "Ingrese el nombre del archivo de carga de Rutas: ";
+                cin >> nombreArchivo;
                 
+                cargarRutas(nombreArchivo);
+                }
                 break;
             //carga de movimientos
             case 4:

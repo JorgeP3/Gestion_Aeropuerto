@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string.h>
-#include "Piloto.h"
+#include "../clases/Piloto.h"
 using namespace std;
 
 class NodoMatriz
