@@ -163,6 +163,7 @@ void cargaMovimientos(string nombreArchivo) {
             string id_piloto=palabras[1];
             
             tablahashPilotos.eliminarPiloto(id_piloto);
+            matrizPilotos.eliminarNodo(id_piloto);
             
         /*PROCESADO DEL MANTENIMIENTO DE AVIONES*/
         }else if(palabras[0]=="MantenimientoAviones"||palabras[0]=="mantenimientoaviones"){
@@ -270,15 +271,18 @@ void cargarRutas(string nombreArchivo){
 
 void visualizarReportes() {
 
-    cout << "======LISTA DE AVIONES EN MANTENIMIENTO======" << endl;
-    AvionesMantenimiento.visualizarLista();
     cout << "======REPORTES DOT.======" << endl;
     avionesDisponibles.generarReporte("Aviones_Disponibles");
     AvionesMantenimiento.generarReporte("Aviones_Mantenimiento");
     arbolBBpilotos.generarReporte("ArbolBinario_Horas");
     tablahashPilotos.generarReporte("Tabla_hash");
     matrizPilotos.generarReporte("Matriz_Dispersa");
-    grafoRutas->generarReporte("Grafo_Rutas");
+    if (grafoRutas!=nullptr)
+    {
+        grafoRutas->generarReporte("Grafo_Rutas");
+    }else{
+        cout << "El grafo no ha sido creado" << endl;
+    }
     //grafoRutas->imprimirMatriz();
 }
 

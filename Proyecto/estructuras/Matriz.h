@@ -20,6 +20,7 @@ public:
     void generarReporte(string titulo);
     void recorrerMatriz();
     void imprimirMatriz();
+    void eliminarNodo(string id);
     ~Matriz();
 };
 
@@ -41,7 +42,7 @@ NodoMatriz* Matriz::buscarFila(string fila, NodoMatriz* inicio)
     }
     return nullptr; //Si no la encuentra quiere decir que no existe la cabecera fila
 }
-
+                                    //nombre de la columna y la raiz
 NodoMatriz* Matriz::buscarColumna(string columna, NodoMatriz* inicio)
 {
     NodoMatriz* aux = inicio; //inicio puede ser el root
@@ -56,7 +57,7 @@ NodoMatriz* Matriz::buscarColumna(string columna, NodoMatriz* inicio)
     return nullptr; //Si no la encuentra quiere decir que no existe la cabecera columna
 }
 
-NodoMatriz* Matriz::crearFila(string fila)
+NodoMatriz* Matriz::crearFila(string fila)//crea la fila y devuelve dicha fila
 {
     NodoMatriz* f = new NodoMatriz("Fila", fila, "-1");
     NodoMatriz* aux = root;
@@ -110,7 +111,7 @@ void Matriz::insertar(Piloto dato, string fila, string columna)
    {
         NodoMatrizColumna = crearColumna(columna);
    }
-   else if (NodoMatrizFila == nullptr && NodoMatrizColumna != nullptr)
+   else if (NodoMatrizFila == nullptr && NodoMatrizColumna != nullptr)//Caso 3
    {
         NodoMatrizFila = crearFila(fila);
    }
@@ -464,6 +465,59 @@ void Matriz::imprimirMatriz() {
     }
 }
 
+void Matriz::eliminarNodo(string id)
+{
+    NodoMatriz* filaActual = root->getAbajo();
+    while (filaActual != nullptr) {
+        NodoMatriz* nodoActual = filaActual->getSiguiente();
+        while (nodoActual != nullptr) {
+            if (nodoActual->getDato().getNumero_de_id() == id) { 
+                NodoMatriz* nodoAEliminar = nodoActual;
+                NodoMatriz* anterior = nodoActual->getAnterior();
+                NodoMatriz* siguiente = nodoActual->getSiguiente();
+                NodoMatriz* arriba = nodoActual->getArriba();
+                NodoMatriz* abajo = nodoActual->getAbajo();
+
+               
+                if (anterior != nullptr) anterior->setSiguiente(siguiente);
+                if (siguiente != nullptr) siguiente->setAnterior(anterior);
+                if (arriba != nullptr) arriba->setAbajo(abajo);
+                if (abajo != nullptr) abajo->setArriba(arriba);
+
+                
+                if (filaActual->getSiguiente() == nullptr) {
+                    NodoMatriz* filaAnterior = filaActual->getArriba();
+                    NodoMatriz* filaSiguiente = filaActual->getAbajo();
+                    if (filaAnterior != nullptr) filaAnterior->setAbajo(filaSiguiente);
+                    if (filaSiguiente != nullptr) filaSiguiente->setArriba(filaAnterior);
+                    delete filaActual;
+                }
+
+                
+                NodoMatriz* columnaActual = root->getSiguiente();
+                while (columnaActual != nullptr) {
+                    if (columnaActual->getColumna() == nodoAEliminar->getColumna()) {
+                        if (columnaActual->getAbajo() == nullptr) {
+                            NodoMatriz* columnaAnterior = columnaActual->getAnterior();
+                            NodoMatriz* columnaSiguiente = columnaActual->getSiguiente();
+                            if (columnaAnterior != nullptr) columnaAnterior->setSiguiente(columnaSiguiente);
+                            if (columnaSiguiente != nullptr) columnaSiguiente->setAnterior(columnaAnterior);
+                            delete columnaActual;
+                        }
+                        break;
+                    }
+                    columnaActual = columnaActual->getSiguiente();
+                }
+
+                delete nodoAEliminar;
+                return;
+            }
+            nodoActual = nodoActual->getSiguiente();
+        }
+        filaActual = filaActual->getAbajo();
+    }
+}
+
 
 /*
 void Matriz::recorrerMatriz() {
@@ -481,25 +535,3 @@ void Matriz::recorrerMatriz() {
 Matriz::~Matriz()
 {
 }
-
-
-
-        
-        /*
-        do{
-            string numero_registro=actual->getColumna();
-            codigoDot+=numero_registro+"\n";
-            actual=actual->getSiguiente();
-        }while (actual!=nullptr);
-        actual=root;
-        do{
-            string numero_registro=actual->getColumna();
-            codigoDot+=numero_registro;
-            actual=actual->getSiguiente();
-            if (actual != nullptr)
-            {   
-                codigoDot+="->";
-            }
-
-        }while (actual!=nullptr);
-        */

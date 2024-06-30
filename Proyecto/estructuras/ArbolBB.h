@@ -216,43 +216,6 @@ string ArbolBB::imprimirNodo(NodoArbol* nodoPtr)
     
 }
 
-
-
-
-
-
-/*
-void ArbolBB::imprimirNodo(NodoArbol* nodoPtr)
-{
-    if (nodoPtr == nullptr)
-    {
-        return;
-    }
-    if (nodoPtr->getIzq() != nullptr)//si el izquiero de raiz actual es diferente de nulo
-    {
-        nodoDato = nodoPtr->getDato();
-        archivo << nodoDato.getHoras_de_vuelo(); 
-        archivo << "->";
-        nodoDato = nodoPtr->getIzq()->getDato();
-        archivo << nodoDato.getHoras_de_vuelo();
-        archivo << ";";
-    }
-    imprimirNodo(nodoPtr->getIzq());
-    
-    if (nodoPtr->getDer()!= nullptr)
-    {
-        nodoDato = nodoPtr->getDato();
-        archivo << nodoDato.getHoras_de_vuelo(); 
-        archivo << "->";
-        nodoDato = nodoPtr->getDer()->getDato();
-        archivo << nodoDato.getHoras_de_vuelo();
-        archivo << ";";
-    }
-    imprimirNodo(nodoPtr->getDer());
-    
-}
-*/
-
 ArbolBB::~ArbolBB()
 {
 }
