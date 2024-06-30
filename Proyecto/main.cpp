@@ -162,6 +162,7 @@ void cargaMovimientos(string nombreArchivo) {
         {
             string id_piloto=palabras[1];
             
+            arbolBBpilotos.eliminarNodo(id_piloto);
             tablahashPilotos.eliminarPiloto(id_piloto);
             matrizPilotos.eliminarNodo(id_piloto);
             

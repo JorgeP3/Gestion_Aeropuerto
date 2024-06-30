@@ -11,6 +11,9 @@ private:
     NodoArbol* raiz;
     ofstream archivo;
     Piloto nodoDato;
+    NodoArbol* eliminarNodo(NodoArbol* nodoPtr, string numero_de_id);
+    NodoArbol* encontrarMaximo(NodoArbol* nodoPtr);
+    
 public:
     int recorrido = 0;
     ArbolBB(/* args */);
@@ -31,6 +34,7 @@ public:
     
     void generarReporte(string titulo);
     string imprimirNodo(NodoArbol* nodoPtr);
+    void eliminarNodo(string numero_de_id);
     ~ArbolBB();
 };
 
@@ -214,6 +218,52 @@ string ArbolBB::imprimirNodo(NodoArbol* nodoPtr)
     codigoDot+=imprimirNodo(nodoPtr->getDer());
     return codigoDot;
     
+}
+
+NodoArbol* ArbolBB::encontrarMaximo(NodoArbol* nodoPtr) {
+    while (nodoPtr->getDer() != nullptr) {
+        nodoPtr = nodoPtr->getDer();
+    }
+    return nodoPtr;
+}
+
+NodoArbol* ArbolBB::eliminarNodo(NodoArbol* nodoPtr, string numero_de_id) {
+    if (nodoPtr == nullptr) {
+        return nodoPtr;
+    }
+
+    if (numero_de_id < nodoPtr->getDato().getNumero_de_id()) {
+        nodoPtr->setIzq(eliminarNodo(nodoPtr->getIzq(), numero_de_id));
+    } else if (numero_de_id > nodoPtr->getDato().getNumero_de_id()) {
+        nodoPtr->setDer(eliminarNodo(nodoPtr->getDer(), numero_de_id));
+    } else {
+        // Caso 1: Nodo hoja
+        if (nodoPtr->getIzq() == nullptr && nodoPtr->getDer() == nullptr) {
+            delete nodoPtr;
+            nodoPtr = nullptr;
+        }
+        // Caso 2: Nodo con un solo hijo
+        else if (nodoPtr->getIzq() == nullptr) {
+            NodoArbol* temp = nodoPtr;
+            nodoPtr = nodoPtr->getDer();
+            delete temp;
+        } else if (nodoPtr->getDer() == nullptr) {
+            NodoArbol* temp = nodoPtr;
+            nodoPtr = nodoPtr->getIzq();
+            delete temp;
+        }
+        // Caso 3: Nodo con dos hijos
+        else {
+            NodoArbol* temp = encontrarMaximo(nodoPtr->getIzq());
+            nodoPtr->setDato(temp->getDato());
+            nodoPtr->setIzq(eliminarNodo(nodoPtr->getIzq(), temp->getDato().getNumero_de_id()));
+        }
+    }
+    return nodoPtr;
+}
+
+void ArbolBB::eliminarNodo(string numero_de_id) {
+    raiz = eliminarNodo(raiz, numero_de_id);
 }
 
 ArbolBB::~ArbolBB()
