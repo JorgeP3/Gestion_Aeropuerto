@@ -7,6 +7,7 @@
 #include "./estructuras/Matriz.h"
 #include "./estructuras/TablaHash.h"
 #include "./estructuras/Grafo.h"
+#include "./estructuras/ArbolB.h"
 
 //librerias
 #include <iostream>
@@ -19,6 +20,8 @@ using namespace std;
 #include "json.hpp"
 using json = nlohmann::json;
 
+
+ArbolB arvolAvionesDisponibles(5);
 CircularDoble avionesDisponibles;
 CircularDoble AvionesMantenimiento;
 ArbolBB arbolBBpilotos;
@@ -157,7 +160,7 @@ void cargaMovimientos(string nombreArchivo) {
             continue; // Saltar líneas vacías
         }
         vector<std::string> palabras =split(linea,",();");
-        /*PROCESADO DEL COMANDO EQUIPAJES*/
+        /*PROCESADO DEL COMANDO DARDENAJA*/
         if (palabras[0]=="DarDeBaja" || palabras[0]=="dardebaja")
         {
             string id_piloto=palabras[1];
@@ -332,6 +335,26 @@ void consultarHorasVuelo(){
 
 }
 
+void recomendarRutas(){
+    string ciudad_origen;
+    string ciuda_destino;
+    cout << "Ingrese una ciudad origen: ";
+    cin >> ciudad_origen;
+    cout << endl;
+    cout << "Ingrese una ciudad destino: ";
+    cin >> ciuda_destino;
+    cout << endl;
+
+    if (grafoRutas!=nullptr)
+    {
+        grafoRutas->encontrarRutaMasCorta(ciudad_origen,ciuda_destino);
+    }else{
+        cout << "El grafo no ha sido creado" << endl;
+    }
+    
+
+}
+
 void menuPrincipal(){
 
     int opcion =0;
@@ -398,7 +421,7 @@ void menuPrincipal(){
                 break;
             //recomendar ruta
             case 6:
-                
+                recomendarRutas();
                 break;
             //visualizar reportes
             case 7:

@@ -11,8 +11,10 @@ private:
     NodoArbol* raiz;
     ofstream archivo;
     Piloto nodoDato;
-    NodoArbol* eliminarNodo(NodoArbol* nodoPtr, string numero_de_id);
+   // NodoArbol* eliminarNodo(NodoArbol* nodoPtr, string numero_de_id);
+    NodoArbol* eliminarNodo(NodoArbol* nodoPtr, int horas_de_vuelo);
     NodoArbol* encontrarMaximo(NodoArbol* nodoPtr);
+    Piloto buscarNodoPorID(NodoArbol* nodoPtr, const string& numero_de_id);
     
 public:
     int recorrido = 0;
@@ -227,6 +229,102 @@ NodoArbol* ArbolBB::encontrarMaximo(NodoArbol* nodoPtr) {
     return nodoPtr;
 }
 
+NodoArbol* ArbolBB::eliminarNodo(NodoArbol* nodoPtr, int horas_de_vuelo) {
+    if (nodoPtr == nullptr) {
+        return nodoPtr;
+    }
+
+    if (horas_de_vuelo < nodoPtr->getDato().getHoras_de_vuelo()) {
+        nodoPtr->setIzq(eliminarNodo(nodoPtr->getIzq(), horas_de_vuelo));
+    } else if (horas_de_vuelo > nodoPtr->getDato().getHoras_de_vuelo()) {
+        nodoPtr->setDer(eliminarNodo(nodoPtr->getDer(), horas_de_vuelo));
+    } else {
+        if (nodoPtr->getIzq() == nullptr) {
+            NodoArbol* temp = nodoPtr;
+            nodoPtr = nodoPtr->getDer();
+            delete temp;
+        } else if (nodoPtr->getDer() == nullptr) {
+            NodoArbol* temp = nodoPtr;
+            nodoPtr = nodoPtr->getIzq();
+            delete temp;
+        } else {
+            NodoArbol* temp = encontrarMaximo(nodoPtr->getIzq());
+            nodoPtr->setDato(temp->getDato());
+            nodoPtr->setIzq(eliminarNodo(nodoPtr->getIzq(), temp->getDato().getHoras_de_vuelo()));
+        }
+    }
+    return nodoPtr;
+}
+
+Piloto ArbolBB::buscarNodoPorID(NodoArbol* nodoPtr, const string& numero_de_id) {
+    if (nodoPtr == nullptr) {
+        return Piloto();
+    }
+    if (nodoPtr->getDato().getNumero_de_id() == numero_de_id) {
+        return nodoPtr->getDato();
+    }
+    Piloto izqResult = buscarNodoPorID(nodoPtr->getIzq(), numero_de_id);
+    if (izqResult.getNumero_de_id() != "") {
+        return izqResult;
+    }
+    return buscarNodoPorID(nodoPtr->getDer(), numero_de_id);
+}
+
+
+void ArbolBB::eliminarNodo(string numero_de_id) {
+    Piloto piloto = buscarNodoPorID(raiz, numero_de_id);
+    if (piloto.getNumero_de_id() != "") {
+        int horas_de_vuelo = piloto.getHoras_de_vuelo();
+        raiz = eliminarNodo(raiz, horas_de_vuelo);
+    } else {
+        cout << "Piloto con ID " << numero_de_id << " no encontrado." << endl;
+    }
+}
+
+/*
+NodoArbol* ArbolBB::encontrarMaximo(NodoArbol* nodoPtr) {
+    while (nodoPtr->getDer() != nullptr) {
+        nodoPtr = nodoPtr->getDer();
+    }
+    return nodoPtr;
+}
+
+NodoArbol* ArbolBB::eliminarNodo(NodoArbol* nodoPtr, string numero_de_id) {
+    if (nodoPtr == nullptr) {
+        return nodoPtr;
+    }
+
+    if (numero_de_id < nodoPtr->getDato().getNumero_de_id()) {
+        nodoPtr->setIzq(eliminarNodo(nodoPtr->getIzq(), numero_de_id));
+    } else if (numero_de_id > nodoPtr->getDato().getNumero_de_id()) {
+        nodoPtr->setDer(eliminarNodo(nodoPtr->getDer(), numero_de_id));
+    } else {
+        // Caso 1: Nodo hoja o nodo con un solo hijo
+        if (nodoPtr->getIzq() == nullptr) {
+            NodoArbol* temp = nodoPtr;
+            nodoPtr = nodoPtr->getDer();
+            delete temp;
+        } else if (nodoPtr->getDer() == nullptr) {
+            NodoArbol* temp = nodoPtr;
+            nodoPtr = nodoPtr->getIzq();
+            delete temp;
+        }
+        // Caso 3: Nodo con dos hijos
+        else {
+            NodoArbol* temp = encontrarMaximo(nodoPtr->getIzq());
+            nodoPtr->setDato(temp->getDato());
+            nodoPtr->setIzq(eliminarNodo(nodoPtr->getIzq(), temp->getDato().getNumero_de_id()));
+        }
+    }
+    return nodoPtr;
+}
+
+void ArbolBB::eliminarNodo(string numero_de_id) {
+    raiz = eliminarNodo(raiz, numero_de_id);
+}
+*/
+
+/*
 NodoArbol* ArbolBB::eliminarNodo(NodoArbol* nodoPtr, string numero_de_id) {
     if (nodoPtr == nullptr) {
         return nodoPtr;
@@ -264,7 +362,7 @@ NodoArbol* ArbolBB::eliminarNodo(NodoArbol* nodoPtr, string numero_de_id) {
 
 void ArbolBB::eliminarNodo(string numero_de_id) {
     raiz = eliminarNodo(raiz, numero_de_id);
-}
+}*/
 
 ArbolBB::~ArbolBB()
 {

@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <limits.h>
+#include <vector>
 using namespace std;
 #include "Vertice.h"
 
@@ -11,6 +13,8 @@ private:
     int maxVertices; //número máximo de vértices en el grafo
     Vertice* vertices; //arreglo de vértices
     int** matrizAdy; //matriz de adyacencia
+
+    int minimoDistancia(int dist[], bool sptSet[]);
 
     ofstream archivo;
     string arco;
@@ -26,6 +30,7 @@ public:
     void nuevoArco(string nom1, string nom2, int distancia); //Agrega 1 a la matriz de adyacencia si los 2 vértices existen
     void imprimirMatriz();
     void generarReporte(string titulo);
+    void encontrarRutaMasCorta(string ciudadOrigen, string ciudadDestino);
     int getMaxVertices();
     void setMaxvertices(int maxVertices);
     ~Grafo();
@@ -57,6 +62,7 @@ Grafo::Grafo(int max)
     
     /**/
 }
+
 
 int Grafo::getNumVertices()
 {
@@ -164,7 +170,80 @@ void Grafo::generarReporte(string titulo)
     }
 }
 
+int Grafo::minimoDistancia(int dist[], bool sptSet[])
+{
+    int min = INT_MAX, minIndex;
+    for (int v = 0; v < numVertices; v++)
+    {
+        if (!sptSet[v] && dist[v] <= min)
+        {
+            min = dist[v], minIndex = v;
+        }
+    }
+    return minIndex;
+}
+
+void Grafo::encontrarRutaMasCorta(string ciudadOrigen, string ciudadDestino)
+{
+    int src = existeVertice(ciudadOrigen);
+    int dest = existeVertice(ciudadDestino);
+
+    if (src == -1 || dest == -1)
+    {
+        cout << "Una de las ciudades no existe en el grafo." << endl;
+        return;
+    }
+
+    int dist[numVertices];
+    bool sptSet[numVertices];
+    int parent[numVertices];
+
+    for (int i = 0; i < numVertices; i++)
+    {
+        dist[i] = INT_MAX;
+        sptSet[i] = false;
+        parent[i] = -1;
+    }
+
+    dist[src] = 0;
+
+    for (int count = 0; count < numVertices - 1; count++)
+    {
+        int u = minimoDistancia(dist, sptSet);
+        sptSet[u] = true;
+
+        for (int v = 0; v < numVertices; v++)
+        {
+            if (!sptSet[v] && matrizAdy[u][v] && dist[u] != INT_MAX && dist[u] + matrizAdy[u][v] < dist[v])
+            {
+                dist[v] = dist[u] + matrizAdy[u][v];
+                parent[v] = u;
+            }
+        }
+    }
+
+    vector<string> path;
+    for (int v = dest; v != -1; v = parent[v])
+    {
+        path.push_back(vertices[v].getNombre());
+    }
+
+    cout << "Ruta mas corta de " << ciudadOrigen << " a " << ciudadDestino << ": ";
+    for (int i = path.size() - 1; i >= 0; i--)
+    {
+        cout << path[i];
+        if (i != 0) cout << " -> ";
+    }
+    cout << endl;
+}
+
 
 Grafo::~Grafo()
 {
+    delete[] vertices;
+    for (int i = 0; i < maxVertices; i++)
+    {
+        delete[] matrizAdy[i];
+    }
+    delete[] matrizAdy;
 }
