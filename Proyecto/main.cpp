@@ -58,6 +58,13 @@ void cargarAviones(string nombreArchivo){
 
             Avion avionNuevo(vuelo,numero_de_registro,modelo,capacidad,aerolinea,ciudad_destino,estado);
             avionesDisponibles.insertarFinal(avionNuevo);
+
+            try {
+                arvolAvionesDisponibles.insertar(avionNuevo.getNumeroDeRegistro());
+            } catch (const exception& e) {
+                cerr << "Error al generar el archivo .dot: " << e.what() << endl;
+            }
+            
             cout << "Avion disponible cargado correctamente" << endl;
         //CARGA DE AVIONES en mantenimiento
         }else if(estado=="Mantenimiento"||estado=="mantenimiento"){
@@ -276,7 +283,12 @@ void cargarRutas(string nombreArchivo){
 void visualizarReportes() {
 
     cout << "======REPORTES DOT.======" << endl;
-    avionesDisponibles.generarReporte("Aviones_Disponibles");
+    try {
+        arvolAvionesDisponibles.generarDot("ArbolBpilotos");
+    } catch (const exception& e) {
+        cerr << "Error al generar el archivo .dot: " << e.what() << endl;
+    }
+    //avionesDisponibles.generarReporte("Aviones_Disponibles");
     AvionesMantenimiento.generarReporte("Aviones_Mantenimiento");
     arbolBBpilotos.generarReporte("ArbolBinario_Horas");
     tablahashPilotos.generarReporte("Tabla_hash");
