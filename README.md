@@ -4,26 +4,26 @@
 
 ## Estructuras de Datos Utilizadas
 
-### Árbol B: Para gestionar los aviones disponibles.
+### -Árbol B: Para gestionar los aviones disponibles.
 
-### Lista circular doble: Para aviones en mantenimiento.
+### -Lista circular doble: Para aviones en mantenimiento.
 
-### Árbol binario de búsqueda: Para organizar a los pilotos según horas de vuelo.
+### -Árbol binario de búsqueda: Para organizar a los pilotos según horas de vuelo.
 
-### Tabla hash: Para registrar y acceder rápidamente a los pilotos por ID.
+### -Tabla hash: Para registrar y acceder rápidamente a los pilotos por ID.
 
-### Grafo dirigido (listas de adyacencia): Para representar las rutas entre ciudades.
+### -Grafo dirigido (listas de adyacencia): Para representar las rutas entre ciudades.
 
-### Matriz dispersa: Para asignar vuelos a destinos y pilotos responsables.
+### -Matriz dispersa: Para asignar vuelos a destinos y pilotos responsables.
 
 ## Funcionalidades 
 
-### Carga de datos desde archivos JSON y TXT.
+### -Carga de datos desde archivos JSON y TXT.
 
-### Menú interactivo en consola para operar el sistema.
+### -Menú interactivo en consola para operar el sistema.
 
-### Reportes visuales de todas las estructuras (con Graphviz).
+### -Reportes visuales de todas las estructuras (con Graphviz).
 
-### Cálculo de rutas más cortas entre ciudades para vuelos.
+### -Cálculo de rutas más cortas entre ciudades para vuelos.
 
-### Alta y baja de pilotos y sus respectivos efectos en todas las estructuras.
+### -Alta y baja de pilotos y sus respectivos efectos en todas las estructuras.
